@@ -14,7 +14,6 @@ f = open('cfg.txt', 'r')
 
 
 
-
 owm = pyowm.OWM('e8f63f748bfc269a3f4db8203af0c657')
 mgr = owm.weather_manager()
 config_dict = get_default_config()
@@ -167,11 +166,10 @@ CityEntryB.bind('<Button-1>', output_search)
 
 # AUTO-SEARCH #
 if f.read(1) == "1":
-    from CityGet import *
-    from CityGet import Gorod
+    from CityGet1 import *
+    from CityGet1 import Gorod
 
     CityEntry.delete(0, END)
     CityEntry.insert(0, Gorod)
     f.close()
-
 root.mainloop()

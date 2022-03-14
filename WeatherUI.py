@@ -101,9 +101,23 @@ def preferences():
      onvalue=1, offvalue=0, variable=var1, command=DEB)
     print(var1)
     auto_search.place(relx=0.5, rely=0.2, anchor=CENTER)
-    f.close
+    f.close()
 
-  
+def start_PC_configuration():
+
+    window_2 = Toplevel(root)
+    window_2.title( 'О твоём ПК' )
+    window_2.iconbitmap('ICO.ico')
+    window_2.geometry('350x500+750+250')
+    window_2.resizable(0,0)
+    canvas1 = Canvas(window_2)
+    canvas1.pack()  
+
+    text = Text(window_2, width=30)
+    text.place(relx = 0.5, anchor=N)
+    from PcConfigure import PC_CONFIGURE
+    text.insert(1.0, PC_CONFIGURE)
+
 
 # root #
 root = Tk()
@@ -118,6 +132,7 @@ root.config(menu=mainmenu)
 
 referencemenu = Menu(mainmenu, tearoff=0)
 referencemenu.add_command(label='О программе', command=start_reference)
+referencemenu.add_command(label='О твоём компьютере', command=start_PC_configuration)
 
 actionmenu = Menu(mainmenu, tearoff=0)
 actionmenu.add_command(label='Закрыть', command=close)
@@ -172,4 +187,6 @@ if f.read(1) == "1":
     CityEntry.delete(0, END)
     CityEntry.insert(0, Gorod)
     f.close()
+
+f.close()
 root.mainloop()

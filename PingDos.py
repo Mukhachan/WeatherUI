@@ -1,4 +1,4 @@
 import os
-
 while True:
-    os.system('ping ip-api.com')
+    x = os.system('ping ip-api.com')
+    print(x)

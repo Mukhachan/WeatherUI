@@ -2,14 +2,13 @@ import sys, os, pyowm, datetime
 from time import sleep
 from tkinter import *
 from pyowm.utils.config import get_default_config
-from requests import get
 
 dt = datetime.datetime.now()
 dt_string = dt.strftime("%H:%M:%S")
 print(f"Now is {dt_string}")
 
 from Config import *
-f = open('cfg.txt', 'r')
+f = open('config.cfg', 'r')
 
 owm = pyowm.OWM('e8f63f748bfc269a3f4db8203af0c657')
 mgr = owm.weather_manager()
@@ -48,37 +47,43 @@ def start_reference():
     canvas = Canvas(window, width=350, height=350)
     canvas.pack()
 
-""" def search():
-    ip = get('http://ip-api.com/line/?fields=query').text
-    g = get('http://ip-api.com/line/?fields=city').text
-    print(ip)
-    print(g)
-    print(g)
-    CityEntry.delete(0, END)
-    CityEntry.insert(0, g) """
+def start_PC_configuration():
+    window_2 = Toplevel(root)
+    window_2.title( 'О твоём ПК' )
+    window_2.iconbitmap('ICO.ico')
+    window_2.geometry('350x370+750+250')
+    window_2.resizable(0,1)
+    canvas1 = Canvas(window_2)
+    canvas1.pack()  
+
+    text = Text(window_2, width=30)
+    text.place(relx = 0.5, anchor=N)
+    from PcConfigure import PC_CONFIGURE
+
+    text.insert(1.0, PC_CONFIGURE)
 
 def preferences():
-    f = open("cfg.txt", "r")
+    f = open("config.cfg", "r")
     def DEB():        
-        print(var1.get())
+        print(f'DEB. {var1.get()}')
         if var1.get() == 0:
-            os.remove("cfg.txt")
-            f = open("cfg.txt", "w")
-            f.write("0")
+            os.remove("config.cfg")
+            f = open("config.cfg", "w")
+            f.write("0\n"+str(var2.get()))
             f.close()
             
             UnMatch = Label(window_1,text="Автопоиск выключен")
-            UnMatch.place(relx=0.5, rely=0.38, anchor=CENTER)
+            UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
 
         elif var1.get()==1:
-            os.remove("cfg.txt")
-            f = open("cfg.txt", "w")
-            f.write("1")
+            os.remove("config.cfg")
+            f = open("config.cfg", "w")
+            f.write("1\n"+str(var2.get()))
             f.close()
 
             UnMatch = Label(window_1,text="Автопоиск включен")
-            UnMatch.place(relx=0.5, rely=0.38, anchor=CENTER)            
-        
+            UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
+                               
     window_1 = Toplevel(root)
     window_1.title('Настройки')
     window_1.iconbitmap('ICO.ico')
@@ -89,37 +94,67 @@ def preferences():
     canvas1.pack()
 
     var1 = IntVar()
-    stat = f.read(1)
-    var1.set(stat)
+    
+    list  = f.readlines()
+
+    var1.set(list[0])
     var1.get()
     
-    if var1.get()==1:
+
+
+    print('Хрень какая-то')
+    
+    if var1.get()=='1':
         UnMatch = Label(window_1,text="Автопоиск включен", bd=10, bg='#F0F0F0')
-        UnMatch.place(relx=0.5, rely=0.38, anchor=CENTER)         
-    elif var1.get()==0:
-        UnMatch = Label(window_1,text="Автопоиск выключен", bd=10, bg='#F0F0F0')
-        UnMatch.place(relx=0.5, rely=0.38, anchor=CENTER)         
+        UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
+        output_search
+    elif var1.get()=='0':
+        UnMatch = Label(window_1,text="Автопоиск выключен", bd=13, bg='#F0F0F0')
+        UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)         
 
     auto_search = Checkbutton(window_1, text='Автопоиск города',
      onvalue=1, offvalue=0, variable=var1, command=DEB)
     print(var1)
-    auto_search.place(relx=0.5, rely=0.2, anchor=CENTER)
+    auto_search.place(relx=0.5, rely=0.1, anchor=CENTER)
+    
+    
+    def WIND():
+        print(f'WIND. {var2.get()}')
+        if var2.get() == 0:
+            os.remove("config.cfg")
+            f = open("config.cfg", "a+")
+            f.write(str(var1.get())+"\n0")
+            f.close()
+            
+            UnMatch2 = Label(window_1,text="Выключено", fg='#c20e0e')
+            UnMatch2.place(relx=0.5, rely=0.65, anchor=CENTER)
+            Wind.place_forget()
+            CloudsEntry.place_forget()
+            root.geometry("450x250")
+            split_var2()
+            
+        elif var2.get()==1:
+            os.remove("config.cfg")
+            f = open("config.cfg", "a+")
+            f.write(str(var1.get())+"\n1")
+            f.close()
+
+            UnMatch2 = Label(window_1,text="Включено",bd=12, bg='#F0F0F0', fg='#00ad09')
+            UnMatch2.place(relx=0.5, rely=0.65, anchor=CENTER)
+            Wind.place(relx=0.2, rely=0.77, anchor=CENTER)
+            CloudsEntry.place(relx=0.5,rely=0.77, anchor=CENTER)
+            split_var2()
+        
+    var2 = IntVar()
+    
+    var2.set(list[1])
+    var2.get()
+    wind_count = Checkbutton(window_1, text='Показывать ветренность',
+     onvalue=1,offvalue=0, variable=var2, command=WIND)
+    wind_count.place(relx=0.5, rely=0.5, anchor=CENTER)
+
     f.close()
 
-def start_PC_configuration():
-    window_2 = Toplevel(root)
-    window_2.title( 'О твоём ПК' )
-    window_2.iconbitmap('ICO.ico')
-    window_2.geometry('350x500+750+250')
-    window_2.resizable(0,0)
-    canvas1 = Canvas(window_2)
-    canvas1.pack()  
-
-    text = Text(window_2, width=30)
-    text.place(relx = 0.5, anchor=N)
-    from PcConfigure import PC_CONFIGURE
-
-    text.insert(1.0, PC_CONFIGURE)
 
 # root #
 root = Tk()
@@ -170,7 +205,9 @@ TimeEntry = Entry(justify=CENTER)
 CityLabel.place(relx=0.5, rely=0.1, anchor=CENTER)
 CityEntry.place(relx=0.5, rely=0.2, anchor=CENTER)
 CityEntryB.place(relx=0.5, rely=0.35, anchor=CENTER)
-#TimeEntry.place(relx=0.8, rely=0.35, anchor=CENTER, width=90)
+#TimeEntry.place(relx=0.8, rely=0.35, anchor=CENTER, width=90)  
+# НАДО РАЗОБРАТЬСЯ С 
+# ВВЕДЕНИЕМ ВРЕМЕНИ!!!
 Result.place(relx=0.5, rely=0.47, anchor=CENTER)
 DEGEntry.place(relx=0.5, rely=0.6, anchor=CENTER)
 CloudsEntry.place(relx=0.5,rely=0.77, anchor=CENTER)
@@ -181,13 +218,24 @@ Wind.place(relx=0.2, rely=0.77, anchor=CENTER)
 #BtnLNG.bind('<Button-1>', output_lang)#
 CityEntryB.bind('<Button-1>', output_search)
 
+def split_var2():
+    f = open('config.cfg', 'r')
+    splited = str(f.readlines())
+    print(splited)
+    
+split_var2()
+f.close
+
 # AUTO-SEARCH #
-if f.read(1) == "1":
+f = open('config.cfg', 'r')
+if f.readline() == "1":
     from CityGet1 import *
     from CityGet1 import Gorod
 
     CityEntry.delete(0, END)
     CityEntry.insert(0, Gorod)
-    f.close()
+    output_search
+
+
 f.close()
 root.mainloop()

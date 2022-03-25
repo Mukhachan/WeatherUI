@@ -67,7 +67,7 @@ def preferences():
     def DEB():        
         print(f'DEB. {var1.get()}')
         if var1.get() == 0:
-            os.remove("config.cfg")
+            
             f = open("config.cfg", "w")
             f.write("0\n"+str(var2.get()))
             f.close()
@@ -76,7 +76,6 @@ def preferences():
             UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
 
         elif var1.get()==1:
-            os.remove("config.cfg")
             f = open("config.cfg", "w")
             f.write("1\n"+str(var2.get()))
             f.close()
@@ -96,13 +95,13 @@ def preferences():
     var1 = IntVar()
     
     list  = f.readlines()
-
-    var1.set(list[0])
+    print(list[0])
+    var1.set(int(list[0]))
     var1.get()
     
+    DEB
 
 
-    print('Хрень какая-то')
     
     if var1.get()=='1':
         UnMatch = Label(window_1,text="Автопоиск включен", bd=10, bg='#F0F0F0')
@@ -119,10 +118,10 @@ def preferences():
     
     
     def WIND():
+        
         print(f'WIND. {var2.get()}')
         if var2.get() == 0:
-            os.remove("config.cfg")
-            f = open("config.cfg", "a+")
+            f = open("config.cfg", "w+")
             f.write(str(var1.get())+"\n0")
             f.close()
             
@@ -134,8 +133,7 @@ def preferences():
             split_var2()
             
         elif var2.get()==1:
-            os.remove("config.cfg")
-            f = open("config.cfg", "a+")
+            f = open("config.cfg", "w+")
             f.write(str(var1.get())+"\n1")
             f.close()
 
@@ -228,7 +226,7 @@ f.close
 
 # AUTO-SEARCH #
 f = open('config.cfg', 'r')
-if f.readline() == "1":
+if f.readline() == "1\n":
     from CityGet1 import *
     from CityGet1 import Gorod
 

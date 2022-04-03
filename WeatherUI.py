@@ -1,7 +1,9 @@
-import sys, os, pyowm, datetime
+from cgitb import text
+import sys, pyowm, datetime
 from time import sleep
 from tkinter import *
 from pyowm.utils.config import get_default_config
+from tkinter import messagebox as mb
 
 dt = datetime.datetime.now()
 dt_string = dt.strftime("%H:%M:%S")
@@ -22,11 +24,18 @@ def output_lang(event):
     CityEntryB.grid(pady=5, row=2, column=1)
 
 def output_search(event):    
-    S = CityEntry.get()
-    observation = mgr.weather_at_place(S)
-    w = observation.weather
-    Deg = w.temperature('celsius')['temp']
-    print(Deg)
+    try:
+        S = CityEntry.get()
+        observation = mgr.weather_at_place(S)
+        w = observation.weather
+        Deg = w.temperature('celsius')['temp']
+        print(Deg)
+    except:
+        mb.showerror("ошЫбка",
+        "Ты неправильно ввёл город")
+        sleep(1)
+        CityEntry.delete(0, END)
+        
 
     D1 = round(Deg)
     Cloud = w.wind()['speed']
@@ -46,11 +55,17 @@ def start_reference():
     window.resizable(1,1)
     canvas = Canvas(window, width=350, height=350)
     canvas.pack()
+    text_desc = 'Эта программа написана непрограммистом из Москвы',
+    'Я надеюсь кому-то она обязательно поможет и будет удобна для использования',
+    'Все ссылки:',
+    ' vk:https://vk.com/fly_desiner'
+    description = Text(window, text=text_desc , width=30)
+    description.place(relx=0.5)
 
 def start_PC_configuration():
     window_2 = Toplevel(root)
     window_2.title( 'О твоём ПК' )
-    window_2.iconbitmap('ICO.ico')
+    #window_2.iconbitmap('ICO.ico')
     window_2.geometry('350x370+750+250')
     window_2.resizable(0,1)
     canvas1 = Canvas(window_2)
@@ -72,20 +87,18 @@ def preferences():
             f.write("0\n"+str(var2.get()))
             f.close()
             
-            UnMatch = Label(window_1,text="Автопоиск выключен")
-            UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
+            UnMatch['text'] = 'Автопоиск выключен'
 
         elif var1.get()==1:
             f = open("config.cfg", "w")
-            f.write("1\n"+str(var2.get()))
+            f.write("1\n" + str(var2.get()))
             f.close()
 
-            UnMatch = Label(window_1,text="Автопоиск включен")
-            UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
-                               
+            UnMatch['text'] = 'Автопоиск включен'    
+    
     window_1 = Toplevel(root)
     window_1.title('Настройки')
-    window_1.iconbitmap('ICO.ico')
+    #window_1.iconbitmap('ICO.ico')
     window_1.geometry('290x200+350+350')
     window_1.resizable(0,0)
 
@@ -95,21 +108,23 @@ def preferences():
     var1 = IntVar()
     
     list  = f.readlines()
-    print(list[0])
+    print(f'str.113 {list}')
     var1.set(int(list[0]))
     var1.get()
-    
-    DEB
 
+    var2 = IntVar()
+    list  = f.readlines()
+    var2.get()
 
-    
+    UnMatch = Label(window_1,text='', bd=10, bg='#F0F0F0')
+    UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
+
     if var1.get()=='1':
-        UnMatch = Label(window_1,text="Автопоиск включен", bd=10, bg='#F0F0F0')
-        UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)
+        UnMatch[text] = 'Автопоиск включен'
         output_search
     elif var1.get()=='0':
-        UnMatch = Label(window_1,text="Автопоиск выключен", bd=13, bg='#F0F0F0')
-        UnMatch.place(relx=0.5, rely=0.30, anchor=CENTER)         
+        UnMatch[text] = 'Автопоиск выключен'
+        
 
     auto_search = Checkbutton(window_1, text='Автопоиск города',
      onvalue=1, offvalue=0, variable=var1, command=DEB)
@@ -118,7 +133,6 @@ def preferences():
     
     
     def WIND():
-        
         print(f'WIND. {var2.get()}')
         if var2.get() == 0:
             f = open("config.cfg", "w+")
@@ -143,10 +157,7 @@ def preferences():
             CloudsEntry.place(relx=0.5,rely=0.77, anchor=CENTER)
             split_var2()
         
-    var2 = IntVar()
-    
-    var2.set(list[1])
-    var2.get()
+
     wind_count = Checkbutton(window_1, text='Показывать ветренность',
      onvalue=1,offvalue=0, variable=var2, command=WIND)
     wind_count.place(relx=0.5, rely=0.5, anchor=CENTER)
@@ -159,7 +170,7 @@ root = Tk()
 root.title("WeatherUI")
 root.geometry('450x300+750+250')
 root.resizable(False,False)
-root.iconbitmap('ICO.ico')
+#root.iconbitmap('ICO.ico')
 
 # Menu #
 mainmenu = Menu(root)
@@ -226,14 +237,19 @@ f.close
 
 # AUTO-SEARCH #
 f = open('config.cfg', 'r')
-if f.readline() == "1\n":
+check_auto_search = f.readlines()[0]
+print(f' Переменная - {check_auto_search}')
+if check_auto_search == "1":
+    
     from CityGet1 import *
     from CityGet1 import Gorod
 
     CityEntry.delete(0, END)
     CityEntry.insert(0, Gorod)
     output_search
-
+elif check_auto_search == "0":
+    
+    print('Автопоиск выключен')
 
 f.close()
 root.mainloop()

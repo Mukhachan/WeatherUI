@@ -19,12 +19,8 @@ elif check_file == True:
         readline1 = f.readline()
         f.close
 
-        try:
-            if read[0] == '1\n':
-                print('Всё ок')
-            elif read[0] == '0\n':
-                print('Всё ок')
-            elif read[0] == '\n':
+        try:            
+            if read[0] == '1' or '0' or '\n':
                 print('Всё ок')
         except:
             f = open('config.cfg', 'w+')
@@ -43,7 +39,7 @@ elif check_file == True:
             f = open('config.cfg', 'w')
             
 
-        if read[0] == '1\n' or '0\n' or '\n':
+        if read[0] != '1' or '0' or '\n':
             f = open('config.cfg', 'w+')
             try:
                 f.write('1\n' + read[1])

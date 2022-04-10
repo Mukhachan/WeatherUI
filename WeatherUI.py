@@ -108,7 +108,7 @@ def preferences():
     var1 = IntVar()
     
     list  = f.readlines()
-    print(f'str.113 {list}')
+    
     var1.set(int(list[0]))
     var1.get()
 

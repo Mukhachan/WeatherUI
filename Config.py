@@ -1,4 +1,4 @@
-from operator import index
+
 import os.path
 check_file = os.path.exists('config.cfg')
 if check_file == False:
